@@ -26,9 +26,8 @@ ARCHITECTURE absolute_value_test OF absolute_value_tb IS
 	generic (N : INTEGER:=10);
    	port( 
 		integer_input	: in  std_logic_VECTOR (N-1 downto 0);		
-		absolute_value	: out std_logic_VECTOR (N-1 downto 0);
-		clock			: in  std_logic;
-		reset			: in  std_logic);
+		absolute_value	: out std_logic_VECTOR (N-2 downto 0)
+	);
 	END COMPONENT;
 
 	----------------------------------------------------------------------------
@@ -38,18 +37,16 @@ ARCHITECTURE absolute_value_test OF absolute_value_tb IS
 
 -- I N P U T     S I G N A L S
 	SIGNAL   clk  		: std_logic := '0';
-	SIGNAL	 rst  		: std_logic := '1';
-	SIGNAL   input    	: std_logic_VECTOR (N-1 downto 0):="00111";
+	SIGNAL   input    	: std_logic_VECTOR (N-1 downto 0):="00000";
 
 -- O U T P U T     S I G N A L S
-	SIGNAL   abs_val    : std_logic_VECTOR (N-1 downto 0);
-
+	SIGNAL   abs_val    : std_logic_VECTOR (N-2 downto 0);
 	SIGNAL	 clk_cycle	: INTEGER;
 	SIGNAL	 Testing	: Boolean := True;
 
 BEGIN
    I : absolute_value GENERIC MAP(N=>5)
-             PORT MAP(input,abs_val,clk,rst);
+             PORT MAP(input,abs_val);
 
 	----------------------------------------------------------------------------
 
@@ -62,14 +59,14 @@ BEGIN
    BEGIN
      clk_cycle <= (count+1)/2;
 
-     CASE count IS
-          WHEN  11  => input <= "00000";
-          WHEN  15  => input <= "11111";
-          WHEN  19  => input <= "10000";
-		  WHEN  23  => input <= "10110"; 
-		  WHEN  27  => rst <= '0';
-		  WHEN  31  => rst <= '1';
-		  WHEN  35  => input <= "11110";
+     CASE count IS		
+		  WHEN  07  => input <= "11000";
+		  WHEN  11  => input <= "00111";
+          WHEN  15  => input <= "00000";
+          WHEN  19  => input <= "11111";
+          WHEN  23  => input <= "10000";
+		  WHEN  27  => input <= "10110"; 
+		  WHEN  31  => input <= "11110";
 
           WHEN (TestLen - 1) =>   Testing <= False;
           WHEN OTHERS => NULL;
