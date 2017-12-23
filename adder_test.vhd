@@ -28,23 +28,19 @@ ARCHITECTURE adder_test OF adder_tb IS
 		  	input_b   	: in  std_logic_VECTOR (N-1 downto 0);
        	  	carry_in	: in  std_logic;
 			sum       	: out std_logic_VECTOR (N-1 downto 0);
-		  	carry_out	: out std_logic;
-			clock		: in  std_logic;
-			reset		: in  std_logic);
+		  	carry_out	: out std_logic);
 	END COMPONENT;
 
 	----------------------------------------------------------------------------
-	CONSTANT N       :  INTEGER  := 5;       -- Bus Width
+	CONSTANT N       :  INTEGER  := 10;       -- Bus Width
 	CONSTANT MckPer  :  TIME     := 200 ns;  -- Master Clk period
-	CONSTANT TestLen :  INTEGER  := 40;      -- No. of Count (MckPer/2) for test
+	CONSTANT TestLen :  INTEGER  := 30;      -- No. of Count (MckPer/2) for test
 
 -- I N P U T     S I G N A L S
 	SIGNAL   clk  		: std_logic := '0';
-	SIGNAL	 rst		: std_logic := '1'; 
-	SIGNAL   a_test		: std_logic_VECTOR (N-1 downto 0):="01001";
-	SIGNAL   b_test		: std_logic_VECTOR (N-1 downto 0):="00101";
+	SIGNAL   a_test		: std_logic_VECTOR (N-1 downto 0):="0000000000";
+	SIGNAL   b_test		: std_logic_VECTOR (N-1 downto 0):="0000000000";
 	SIGNAL   cin_test 	: std_logic:='0';
-	-- Given initial values, expected result is sum_test="01110", cout='0'
 
 -- O U T P U T     S I G N A L S
 	SIGNAL   cout_test	: std_logic;
@@ -54,8 +50,8 @@ ARCHITECTURE adder_test OF adder_tb IS
 	SIGNAL	 Testing	: Boolean := True;
 
 BEGIN
-   I : adder GENERIC MAP(N=>5)
-             PORT MAP(a_test,b_test,cin_test,sum_test,cout_test, clk, rst);
+   I : adder GENERIC MAP(N=>10)
+             PORT MAP(a_test,b_test,cin_test,sum_test,cout_test);
 
 	----------------------------------------------------------------------------
 
@@ -68,16 +64,16 @@ BEGIN
    BEGIN
      clk_cycle <= (count+1)/2;
 
-     CASE count IS
-          WHEN  11  => cin_test <= '1'; a_test <= "00000"; b_test <= "11101";
-          WHEN  15  => cin_test <= '1'; a_test <= "00000"; b_test <= "11111";
-          WHEN  19  => cin_test <= '0'; a_test <= "01010"; b_test <= "00000";
-		  WHEN  23  => cin_test <= '0'; a_test <= "01110"; b_test <= "00000"; rst <= '0';
-		  WHEN  27  => cin_test <= '1'; a_test <= "00110"; b_test <= "01100";
-		  WHEN  31  => cin_test <= '1'; a_test <= "01110"; b_test <= "00000"; rst <= '1';
-
-          WHEN (TestLen - 1) =>   Testing <= False;
-          WHEN OTHERS => NULL;
+	CASE count IS
+		WHEN  04  => cin_test <= '0'; a_test <= "0000000010"; b_test <= "1111111101";
+		WHEN  08  => cin_test <= '1'; a_test <= "0000000010"; b_test <= "1111111101";
+		WHEN  12  => cin_test <= '0'; a_test <= "0000000000"; b_test <= "1111111111";  
+		WHEN  16  => cin_test <= '0'; a_test <= "1111111111"; b_test <= "1111111111";
+		WHEN  20  => cin_test <= '0'; a_test <= "1000000000"; b_test <= "1111111111";
+		WHEN  24  => cin_test <= '1'; a_test <= "0111000000"; b_test <= "1111000000";
+		
+		WHEN (TestLen - 1) =>   Testing <= False;
+		WHEN OTHERS => NULL;
      END CASE;
 
      count:= count + 1;

@@ -1,20 +1,3 @@
--------------------------------------------------------------------------------
--- TestBench(incrementer)
---
--- File name : incrementer_test.vhdl
--- Purpose   : Generates stimuli
---           :
--- Library   : IEEE
--- Author(s) : Alessandro Martinelli
---
--- Simulator : Synopsys VSS v. 1999.10, on SUN Solaris 8
--------------------------------------------------------------------------------
--- Revision List
--- Version      Author  Date            	Changes
---
--- 1.0          AMarti  23 september 2017   New version
--------------------------------------------------------------------------------
-
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.all;
 
@@ -26,24 +9,21 @@ ARCHITECTURE incrementer_test OF incrementer_tb IS
 	generic (N : INTEGER:=10);
 	port(	input		: in  std_logic_VECTOR (N-1 downto 0);
        	 	carry_in   	: in  std_logic;
-		 	sum         : out std_logic_VECTOR (N-1 downto 0); 
-			carry_out	: out std_logic
+		 	sum         : out std_logic_VECTOR (N-1 downto 0)
 		);
 	END COMPONENT;
 
-	----------------------------------------------------------------------------
-	CONSTANT N       :  INTEGER  := 5;       -- Bus Width
+	-------------------------------------------------------------
+	CONSTANT N       :  INTEGER  := 10;       -- Bus Width
 	CONSTANT MckPer  :  TIME     := 200 ns;  -- Master Clk period
-	CONSTANT TestLen :  INTEGER  := 40;      -- No. of Count (MckPer/2) for test
+	CONSTANT TestLen :  INTEGER  := 30;      -- No. of Count (MckPer/2) for test
 
 -- I N P U T     S I G N A L S
 	SIGNAL   clk  		: std_logic := '0';
-	SIGNAL	 rst		: std_logic := '1';
-	SIGNAL   a_test		: std_logic_VECTOR (N-1 downto 0):="00000";
+	SIGNAL   a_test		: std_logic_VECTOR (N-1 downto 0):="0000000000";
 	SIGNAL   cin_test  	: std_logic:='0';
 
 -- O U T P U T     S I G N A L S
-	SIGNAL   cout_test	: std_logic;
 	SIGNAL   sum_test	: std_logic_VECTOR (N-1 downto 0);
 
 	SIGNAL	 clk_cycle	: INTEGER;
@@ -51,9 +31,9 @@ ARCHITECTURE incrementer_test OF incrementer_tb IS
 
 BEGIN
    I : incrementer GENERIC MAP(N=>5)
-             PORT MAP(a_test, cin_test, sum_test, cout_test);
+             PORT MAP(a_test, cin_test, sum_test);
 
-	----------------------------------------------------------------------------
+	-------------------------------------------------------------
 
 	-- Generates clk
 	clk <= NOT clk AFTER MckPer/2 WHEN Testing ELSE '0';
@@ -65,13 +45,13 @@ BEGIN
      clk_cycle <= (count+1)/2;
 
      CASE count IS
-          WHEN  11  => cin_test <= '1'; a_test <= "00000";
-          WHEN  15  => cin_test <= '0'; a_test <= "11111";
-		  WHEN  19  => cin_test <= '1'; a_test <= "11111";
-          WHEN  23  => cin_test <= '0'; a_test <= "01010";
-		  WHEN  27  => cin_test <= '1'; a_test <= "01010";
-		  WHEN  31  => cin_test <= '1'; a_test <= "01111";
-		  WHEN  35  => cin_test <= '1'; a_test <= "10000";
+          WHEN  03  => cin_test <= '1'; a_test <= "0000000000";
+          WHEN  07  => cin_test <= '0'; a_test <= "1111111111";
+		  WHEN  11  => cin_test <= '1'; a_test <= "1111111111";
+          WHEN  15  => cin_test <= '0'; a_test <= "0101010101";
+		  WHEN  19  => cin_test <= '1'; a_test <= "0101010101";
+		  WHEN  23  => cin_test <= '1'; a_test <= "0111111111";
+		  WHEN  27  => cin_test <= '1'; a_test <= "1111111110";
 
           WHEN (TestLen - 1) =>   Testing <= False;
           WHEN OTHERS => NULL;

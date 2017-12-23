@@ -29,21 +29,18 @@ ARCHITECTURE subtractor_test OF subtractor_tb IS
    		subtrahend	: in  std_logic_VECTOR (N-1 downto 0);	 
 		borrow_in	: in  std_logic; 
 		difference	: out std_logic_VECTOR (N-1 downto 0);	 
-		borrow_out	: out std_logic;
-		clock		: in  std_logic;
-		reset		: in  std_logic);	
+		borrow_out	: out std_logic);	
 	END COMPONENT;
 
 	----------------------------------------------------------------------------
-	CONSTANT N       :  INTEGER  := 5;       -- Bus Width
+	CONSTANT N       :  INTEGER  := 10;       -- Bus Width
 	CONSTANT MckPer  :  TIME     := 200 ns;  -- Master Clk period
-	CONSTANT TestLen :  INTEGER  := 40;      -- No. of Count (MckPer/2) for test
+	CONSTANT TestLen :  INTEGER  := 30;      -- No. of Count (MckPer/2) for test
 
 -- I N P U T     S I G N A L S
 	SIGNAL   clk  		: std_logic := '0';
-	SIGNAL   rst  		: std_logic := '1';
-	SIGNAL   minuend    : std_logic_VECTOR (N-1 downto 0):="00111";
-	SIGNAL   subtrahend	: std_logic_VECTOR (N-1 downto 0):="00001";
+	SIGNAL   minuend    : std_logic_VECTOR (N-1 downto 0):="0000000000";
+	SIGNAL   subtrahend	: std_logic_VECTOR (N-1 downto 0):="0000000000";
 	SIGNAL   borrow_in  : std_logic:='0';
 
 -- O U T P U T     S I G N A L S
@@ -54,8 +51,8 @@ ARCHITECTURE subtractor_test OF subtractor_tb IS
 	SIGNAL	 Testing	: Boolean := True;
 
 BEGIN
-   I : subtractor GENERIC MAP(N=>5)
-             PORT MAP(minuend,subtrahend,borrow_in,difference,borrow_out,clk,rst);
+   I : subtractor GENERIC MAP(N=>10)
+             PORT MAP(minuend,subtrahend,borrow_in,difference,borrow_out);
 
 	----------------------------------------------------------------------------
 
@@ -68,13 +65,13 @@ BEGIN
    BEGIN
      clk_cycle <= (count+1)/2;
 
-     CASE count IS
-          WHEN  11  => minuend <= "00000"; subtrahend <= "00011";
-          WHEN  15  => minuend <= "00000"; subtrahend <= "11111";
-          WHEN  19  => minuend <= "01010"; subtrahend <= "00011";
-		  WHEN  23  => rst <= '0';
-		  WHEN  27  => rst <= '1';
-		  WHEN  31  => minuend <= "00000"; subtrahend <= "10000";
+     CASE count IS												
+		  WHEN  04  => minuend <= "0100000000"; subtrahend <= "0000000110";
+		  WHEN  07  => minuend <= "1000000000"; subtrahend <= "0000000000";
+          WHEN  11  => minuend <= "1111111111"; subtrahend <= "0000000000";
+          WHEN  15  => minuend <= "0000000001"; subtrahend <= "0000001010";
+          WHEN  19  => minuend <= "0000000000"; subtrahend <= "1000000000";
+		  WHEN  23  => minuend <= "0000000000"; subtrahend <= "1111111111";
 
           WHEN (TestLen - 1) =>   Testing <= False;
           WHEN OTHERS => NULL;

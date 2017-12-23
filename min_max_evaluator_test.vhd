@@ -1,22 +1,3 @@
-						   								-------------------------------------------------------------------------------
--- TestBench(min_max_evaluator)
---
--- File name : min_max_evaluator_test.vhdl
--- Purpose   : Generates stimuli
---           :
--- Library   : IEEE
--- Author(s) : Alessandro Martinelli
--- Copyrigth : CSMDR-CNR 2001. No part may be reproduced
---           : in any form without the prior written permission by CNR.
---
--- Simulator : Synopsys VSS v. 1999.10, on SUN Solaris 8
--------------------------------------------------------------------------------
--- Revision List
--- Version      Author  Date            Changes
---
--- 1.0          LFanu   24 April 2001   New version
--------------------------------------------------------------------------------
-
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.all;
 
@@ -30,21 +11,19 @@ ARCHITECTURE max_min_evaluator_test OF min_max_evaluator_tb IS
 		x	: in  std_logic_VECTOR (N-1 downto 0);	
    		y	: in  std_logic_VECTOR (N-1 downto 0);	 
 		max	: out std_logic_VECTOR (N-1 downto 0);
-		min	: out std_logic_VECTOR (N-1 downto 0);
-		clk : in  std_logic;
-		rst : in  std_logic);
+		min	: out std_logic_VECTOR (N-1 downto 0)
+	);
 	END COMPONENT;
 
 	----------------------------------------------------------------------------
-	CONSTANT N       :  INTEGER  := 5;       -- Bus Width
+	CONSTANT N       :  INTEGER  := 10;       -- Bus Width
 	CONSTANT MckPer  :  TIME     := 200 ns;  -- Master Clk period
-	CONSTANT TestLen :  INTEGER  := 40;      -- No. of Count (MckPer/2) for test
+	CONSTANT TestLen :  INTEGER  := 18;      -- No. of Count (MckPer/2) for test
 
 -- I N P U T     S I G N A L S
 	SIGNAL   clk  : std_logic := '0';
-	SIGNAL   rst  : std_logic := '1';
-	SIGNAL   a    : std_logic_VECTOR (N-1 downto 0):="00111";
-	SIGNAL   b    : std_logic_VECTOR (N-1 downto 0):="00001";
+	SIGNAL   a    : std_logic_VECTOR (N-1 downto 0):="0000000000";
+	SIGNAL   b    : std_logic_VECTOR (N-1 downto 0):="0000000000";
 
 -- O U T P U T     S I G N A L S
 	SIGNAL   max    : std_logic_VECTOR (N-1 downto 0);
@@ -54,8 +33,8 @@ ARCHITECTURE max_min_evaluator_test OF min_max_evaluator_tb IS
 	SIGNAL	 Testing	: Boolean := True;
 
 BEGIN
-   I : min_max_evaluator GENERIC MAP(N=>5)
-             PORT MAP(a,b,max,min,clk,rst);
+   I : min_max_evaluator GENERIC MAP(N=>10)
+             PORT MAP(a,b,max,min);
 
 	----------------------------------------------------------------------------
 
@@ -69,13 +48,9 @@ BEGIN
      clk_cycle <= (count+1)/2;
 
      CASE count IS
-          WHEN  11  => a <= "00000"; b <= "00011";
-          WHEN  15  => a <= "00000"; b <= "11111";
-          WHEN  19  => a <= "01010"; b <= "00011";
-		  WHEN  23  => a <= "00000"; b <= "10000"; 
-		  WHEN  27  => rst <= '0';
-		  WHEN  31  => rst <= '1';
-		  WHEN  35  => a <= "10101"; b <= "10101"; 
+          WHEN  04  => a <= "0000001010"; b <= "0000000011";
+          WHEN  08  => a <= "0000000000"; b <= "1111111111";
+		  WHEN  12  => a <= "0000011111"; b <= "0000011111";
 
           WHEN (TestLen - 1) =>   Testing <= False;
           WHEN OTHERS => NULL;
